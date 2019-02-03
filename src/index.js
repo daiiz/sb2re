@@ -1,5 +1,8 @@
 const {getTopics} = require('./reader/readTopics')
+const {readPages} = require('./reader/readJsons')
 
 const topics = getTopics()
 
-console.log(topics)
+const pages = readPages(topics)
+
+console.log(pages)
