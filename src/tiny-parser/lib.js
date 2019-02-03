@@ -44,9 +44,9 @@ const detectBracketType = bracketText => {
     // ラベル付きリンク
     const [a, b] = bracketText.split(' ')
     if (isUrl(a)) {
-      return [isGyazoUrl(a) ? 'gyazo' : 'externalLink', {url: a, label: b}]
+      return [isGyazoUrl(a) ? 'gyazo' : 'externalLinkWithLabel', {url: a, label: b}]
     } else if (isUrl(b)) {
-      return [isGyazoUrl(b) ? 'gyazo' : 'externalLink', {url: b, label: a}]
+      return [isGyazoUrl(b) ? 'gyazo' : 'externalLinkWithLabel', {url: b, label: a}]
     } else {
       return ['internalLink', bracketText]
     }

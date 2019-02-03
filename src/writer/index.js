@@ -8,9 +8,9 @@ const writeTxtFile = (path, strArr) => {
   console.log(`[out] ${path}`)
 }
 
-const writeReviewFile = (title, page) => {
+const writeReviewFile = (title, rePage) => {
   const path = `${reviewDir}/${title}.re`
-  writeTxtFile(path, [title, ...page.map(p => JSON.stringify(p))])
+  writeTxtFile(path, rePage)
 }
 
 const writeCatalogYaml = ({topics}) => {
