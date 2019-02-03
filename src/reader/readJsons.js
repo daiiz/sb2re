@@ -30,7 +30,6 @@ const readPages = ({projectName, topics}) => {
       const {title, lines} = page
       if (!title || !lines) continue
       const titleLc = title.toLowerCase()
-      console.log(titleLc)
       // topicsに列挙されていないpageは対象外である
       if (!topicsLc.includes(titleLc)) continue
       lines.shift()
