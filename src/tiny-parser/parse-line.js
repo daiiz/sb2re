@@ -1,4 +1,4 @@
-const {getIndentNums, splitToBracketToks, parseBackquotes} = require('./lib')
+const {getIndentSize, splitToBracketToks, parseBackquotes} = require('./lib')
 
 class TinyParser {
   constructor() {
@@ -11,7 +11,7 @@ class TinyParser {
   }
 
   initBlockState () {
-    this._opendBlock = null // 'codeblock', 'quote'
+    this._opendBlock = null // 'codeblock'
     this._blockIndent = 0
     this._blockPool = []
   }
@@ -33,12 +33,12 @@ class TinyParser {
       this.parseBlock(text)
       return
     }
-    const [indent, trimedText] = getIndentNums(text)
+    const [indent, isQuote, trimedText] = getIndentSize(text)
     const toks = splitToBracketToks(trimedText)
     parseBackquotes(toks)
 
-    console.log(indent, toks)
-    this._res.push({indent, toks})
+    console.log(indent, isQuote, toks)
+    this._res.push({indent, isQuote, toks})
   }
 }
 

@@ -1,8 +1,15 @@
-const getIndentNums = text => {
+// 字下げ幅と引用であるかを把握する
+const getIndentSize = text => {
   const pattern = /^\s+/
   const matched = text.match(pattern)
-  if (!matched) return [0, text]
-  return [matched[0].length, text.replace(pattern, '')]
+  const indentSize = !matched ? 0 : matched[0].length
+  text = text.replace(pattern, '')
+
+  const quotePattern = /^>\s*/
+  const isQuote = quotePattern.test(text)
+  text = text.replace(quotePattern, '')
+
+  return [indentSize, isQuote, text]
 }
 
 const shiftText = (strText, shiftNum) => {
@@ -103,4 +110,4 @@ const parseBackquotes = toks => {
   }
 }
 
-module.exports = {getIndentNums, splitToBracketToks, parseBackquotes}
+module.exports = {getIndentSize, splitToBracketToks, parseBackquotes}
