@@ -20,20 +20,28 @@ class TinyParser {
     if (text.length === 0) {
       this._res.push({
         block: this._opendBlock,
+        indent: this._blockIndent,
         lines: this._blockPool
       })
       this.initBlockState()
     } else {
-      this._blockPool.push(text)
+      this._blockPool.push(text.trim())
     }
   }
 
   parseNewLine (text) {
+    const [indent, isQuote, trimedText] = getIndentSize(text)
+
+    if (trimedText.startsWith('code:')) {
+      this._blockIndent = indent
+      this._opendBlock = 'codeblock'
+    }
+
     if (this._opendBlock) {
       this.parseBlock(text)
       return
     }
-    const [indent, isQuote, trimedText] = getIndentSize(text)
+
     const toks = splitToBracketToks(trimedText)
     parseBackquotes(toks)
 

@@ -8,6 +8,7 @@ const pages = readPages(topics)
 
 for (const page of pages) {
   const res = parseLines(page.lines)
+  console.log('index.js', res)
 }
 
 
