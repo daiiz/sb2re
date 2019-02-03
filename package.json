@@ -2,8 +2,9 @@
   "name": "scrapbox2review",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "./src/index.js",
   "scripts": {
+    "convert": "node ./src/index.js"
   },
   "keywords": [
     "scrapbox",
