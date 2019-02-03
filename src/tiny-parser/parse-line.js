@@ -35,6 +35,7 @@ class TinyParser {
     if (trimedText.startsWith('code:')) {
       this._blockIndent = indent
       this._opendBlock = 'codeblock'
+      text = text.split(':')[1]
     }
 
     if (this._opendBlock) {
