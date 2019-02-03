@@ -1,0 +1,14 @@
+{
+  "name": "scrapbox2review",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+  },
+  "keywords": [
+    "scrapbox",
+    "review"
+  ],
+  "author": "daiiz",
+  "license": "MIT"
+}
