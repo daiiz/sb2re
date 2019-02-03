@@ -8,4 +8,20 @@ const parseLines = lines => {
   return parser.result
 }
 
-module.exports = {parseLines}
+const getGyazoUrlList = pageRes => {
+  const gayzoUrls = []
+  // page
+  for (const res of pageRes) {
+    const toks = res.toks
+    // line
+    for (const tok of toks) {
+      if (typeof tok === 'string') continue
+      if (tok.type === 'gyazo') {
+        gayzoUrls.push(tok.text.url || tok.text)
+      }
+    }
+  }
+  return gayzoUrls
+}
+
+module.exports = {parseLines, getGyazoUrlList}

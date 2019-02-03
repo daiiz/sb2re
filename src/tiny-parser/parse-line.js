@@ -46,7 +46,7 @@ class TinyParser {
     const toks = splitToBracketToks(trimedText)
     parseBackquotes(toks)
 
-    console.log(indent, isQuote, toks)
+    //console.log("$$", indent, isQuote, toks)
     this._res.push({indent, isQuote, toks})
   }
 }
