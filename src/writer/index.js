@@ -19,7 +19,7 @@ const writeCatalogYaml = ({topics}) => {
     'PREDEF:',
     '',
     'CHAPS:',
-    topics.map(t => `  - ${t}.re`),
+    topics.map(t => `  - ${t}.re`).join('\n'),
     '',
     'APPENDIX:',
     '',
