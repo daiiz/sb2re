@@ -8,7 +8,7 @@ const downloadImages = (gyazoIds, callback) => {
   } else {
     const gyazoId = gyazoIds.pop()
     // すでにfetch済みであればskip
-    if (fs.existsSync(`${imagesDir}/${gyazoId}`)) {
+    if (fs.existsSync(`${imagesDir}/${gyazoId}.png`)) {
       console.log(`> skip (${gyazoId})`)
       downloadImages(gyazoIds, callback)
     } else {
@@ -17,7 +17,7 @@ const downloadImages = (gyazoIds, callback) => {
         .on('response', res => {
           // const contentType = res.headers['content-type']
         })
-        .pipe(fs.createWriteStream(`${imagesDir}/${gyazoId}`))
+        .pipe(fs.createWriteStream(`${imagesDir}/${gyazoId}.png`))
         .on('close', () => {
           console.log(`> (${gyazoIds.length}) ${imagesDir}/${gyazoId}`)
           downloadImages(gyazoIds, callback)
