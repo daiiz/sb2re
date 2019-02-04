@@ -1,3 +1,5 @@
+const {getGyazoId} = require('../gyazo')
+
 const renderReview = (title, lines) => {
   const res = []
   res.push(`= ${title}`)
@@ -55,6 +57,15 @@ const renderLine = (lastIndentSize, line) => {
   for (const tok of toks) {
     switch (tok.type) {
       case 'gyazo': {
+        const url = tok.text
+        const gyazoId = getGyazoId(url)
+        text += `//image[${gyazoId}][]` // [fileName][Caption]
+        break
+      }
+      case 'gyazoWithLabel': {
+        const url = tok.text.url
+        const gyazoId = getGyazoId(url)
+        text += `//image[${gyazoId}][]`
         break
       }
       case 'bold': {
@@ -73,7 +84,7 @@ const renderLine = (lastIndentSize, line) => {
         break
       }
       case 'externalLinkWithLabel': {
-        text += tok.text.label
+        text += tok.text.label //
         break
       }
       case 'icon': {
