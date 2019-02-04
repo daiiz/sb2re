@@ -60,7 +60,7 @@ const renderLine = (lastIndentSize, line) => {
         const url = tok.text
         text += [
           `//image[${getGyazoId(url)}][][scale=0.3]{`, // [fileName][Caption]
-          '}'
+          '//}'
         ].join('\n')
         break
       }
@@ -68,7 +68,7 @@ const renderLine = (lastIndentSize, line) => {
         const url = tok.text.url
         text += [
           `//image[${getGyazoId(url)}][][scale=0.3]{`, // [fileName][Caption]
-          '}'
+          '//}'
         ].join('\n')
         break
       }
@@ -77,7 +77,8 @@ const renderLine = (lastIndentSize, line) => {
         break
       }
       case 'italic': {
-        text += `@<i>{${tok.text}}`
+        // text += `@<i>{${tok.text}}`
+        text += tok.text
         break
       }
       case 'internalLink': {
