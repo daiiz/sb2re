@@ -4,7 +4,8 @@
   "description": "",
   "main": "./src/index.js",
   "scripts": {
-    "convert": "node ./src/index.js"
+    "convert": "node ./src/index.js",
+    "lines": "wc -l `find src/ -name '*.js'`"
   },
   "keywords": [
     "scrapbox",
