@@ -1,7 +1,7 @@
 json/*
 !json/.gitkeep
 out/*
-!out/gyazo/.gitkeep
+!out/images/.gitkeep
 !out/re/.gitkeep
 topics.txt
 

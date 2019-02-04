@@ -15,4 +15,4 @@ $ npm run convert
 ```
 
 Re:VIEW files will be generated at `./out/re/`.<br>
-A URL list of Gyazo images to download will be generated at `./out/gyazo/urls.txt`.
+A URL list of Gyazo images to download will be generated at `./out/images/urls.txt`.
