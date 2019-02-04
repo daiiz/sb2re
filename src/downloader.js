@@ -7,13 +7,22 @@ const downloadImages = (gyazoIds, callback) => {
     if (callback) callback()
   } else {
     const gyazoId = gyazoIds.pop()
-    const url = `https://gyazo.com/${gyazoId}/raw`
-    request.get(url).on('response', res => {
-      // const contentType = res.headers['content-type']
-    }).pipe(fs.createWriteStream(`${imagesDir}/${gyazoId}`)).on('close', () => {
-      console.log(`> (${gyazoIds.length}) ${imagesDir}/${gyazoId}`)
+    // すでにfetch済みであればskip
+    if (fs.existsSync(`${imagesDir}/${gyazoId}`)) {
+      console.log(`> skip (${gyazoId})`)
       downloadImages(gyazoIds, callback)
-    })
+    } else {
+      const url = `https://gyazo.com/${gyazoId}/raw`
+      request.get(url)
+        .on('response', res => {
+          // const contentType = res.headers['content-type']
+        })
+        .pipe(fs.createWriteStream(`${imagesDir}/${gyazoId}`))
+        .on('close', () => {
+          console.log(`> (${gyazoIds.length}) ${imagesDir}/${gyazoId}`)
+          downloadImages(gyazoIds, callback)
+        })
+    }
   }
 }
 
