@@ -20,7 +20,7 @@ class TinyParser {
   parseBlock (indent, text, isStart) {
 
     // if (text.length === 0 || text.length === this._blockIndent) {
-    if (!isStart && (indent === 0 || indent === this._blockIndent)) {
+    if (!isStart && indent <= this._blockIndent) {
       this._res.push({
         block: this._opendBlock,
         indent: this._blockIndent,
@@ -37,22 +37,21 @@ class TinyParser {
 
     let blockStart = false
     if (trimedText.startsWith('code:')) {
+      blockStart = true
       this._blockIndent = indent
       this._opendBlock = 'codeblock'
-      blockStart = true
       text = text.replace(/code:/, '')
     }
 
     if (this._opendBlock) {
       this.parseBlock(indent, text, blockStart)
+      // 直前のparseでblockがcloseされている可能性があるので再度確認
       if (this._opendBlock) return
     }
 
     const toks = splitToBracketToks(trimedText)
     parseBackquotes(toks)
 
-    //console.log("$$", indent, isQuote, toks)
-    // console.log("#####", toks)
     this._res.push({indent, isQuote, toks: flattenDeep(toks)})
   }
 }
