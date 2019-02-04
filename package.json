@@ -4,12 +4,12 @@
   "description": "",
   "main": "./src/index.js",
   "scripts": {
-    "convert": "node ./src/index.js",
-    "download-imgs": "node ./src/image-downloader.js"
+    "convert": "node ./src/main/converter.js",
+    "download-imgs": "node ./src/main/image-downloader.js"
   },
   "keywords": [
     "scrapbox",
-    "review"
+    "Re:VIEW"
   ],
   "author": "daiiz",
   "license": "MIT",

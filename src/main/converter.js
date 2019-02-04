@@ -1,9 +1,9 @@
 const {uniq} = require('lodash')
-const {getTopics} = require('./reader/readTopics')
-const {readPages} = require('./reader/readJsons')
-const {writeTxtFile, writeReviewFile, writeCatalogYaml} = require('./writer/')
-const {parseLines, getGyazoUrlList} = require('./tiny-parser/')
-const {renderReview} = require('./renderer/')
+const {getTopics} = require('../reader/readTopics')
+const {readPages} = require('../reader/readJsons')
+const {writeTxtFile, writeReviewFile, writeCatalogYaml} = require('../writer')
+const {parseLines, getGyazoUrlList} = require('../tiny-parser')
+const {renderReview} = require('../renderer')
 const gyazoDir = './out/images'
 
 const topics = getTopics()
