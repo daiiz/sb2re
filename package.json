@@ -5,7 +5,7 @@
   "main": "./src/index.js",
   "scripts": {
     "convert": "node ./src/index.js",
-    "lines": "wc -l `find src/ -name '*.js'`"
+    "download-imgs": "node ./src/image-downloader.js"
   },
   "keywords": [
     "scrapbox",
