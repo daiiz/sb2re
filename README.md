@@ -1,6 +1,12 @@
 # scrapbox2review
 https://scrapbox.io/teamj/ScrapboxコンテンツをReVIEW記法に変換
 
+## Build
+```
+$ npm install
+```
+
+## Usage
 Please place json files exported from [Scrapbox](https://scrapbox.io/product) in `./scrapbox/:projectName/`.
 
 Edit topics.txt then run the following script:
