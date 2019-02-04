@@ -4,6 +4,7 @@ const {readPages} = require('../reader/readJsons')
 const {writeTxtFile, writeReviewFile, writeCatalogYaml} = require('../writer')
 const {parseLines, getGyazoUrlList} = require('../tiny-parser')
 const {renderReview} = require('../renderer')
+const {getGyazoIds} = require('../gyazo')
 const gyazoDir = './out/images'
 
 const topics = getTopics()
@@ -23,5 +24,7 @@ for (const page of pages) {
   writeReviewFile(page.title, re)
 }
 
+console.log('=====')
 writeTxtFile(`${gyazoDir}/urls.txt`, uniq(gyazoUrls))
+writeTxtFile(`${gyazoDir}/gyazo-ids.txt`, getGyazoIds(gyazoUrls))
 writeCatalogYaml(topics)
