@@ -9,10 +9,16 @@ const getGyazoId = url => {
   return pathname.split('/')[1]
 }
 
+const getGyazoIds = () => {
+  const lines = fs.readFileSync(imageList, 'utf-8').split('\n')
+  const gyazoIds = lines.map(line => getGyazoId(line)).filter(id => !!id)
+  return gyazoIds
+}
+
 const getImageUrls = () => {
   const lines = fs.readFileSync(imageList, 'utf-8').split('\n')
   const gyazoIds = lines.map(line => getGyazoId(line)).filter(id => !!id)
   return gyazoIds.map(id => `https://gyazo.com/${id}/raw`)
 }
 
-module.exports = {getImageUrls}
+module.exports = {getGyazoIds}
