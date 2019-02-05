@@ -1,17 +1,18 @@
 const {getGyazoId} = require('../gyazo')
+const {toLc} = require('../writer/')
 
-const renderReview = (title, lines, gyazoId) => {
+const renderReview = (title, lines, gyazoId, icons = { iconIds: [], iconNameLcs: [] }) => {
   const res = []
   if (gyazoId) {
     // ページの代表Gyazo画像idを記録
-    res.push(`${gyazoId}`)
+    res.push(`#@# ${gyazoId} #@#`)
     res.push('')
   }
   res.push(`= ${title}`)
 
   let lastIndent = 0
   for (const line of lines) {
-    const [indentSize, re] = renderLine(lastIndent, line)
+    const [indentSize, re] = renderLine(lastIndent, line, icons)
     lastIndent = indentSize
     res.push(re)
   }
@@ -19,7 +20,7 @@ const renderReview = (title, lines, gyazoId) => {
   return res
 }
 
-const renderLine = (lastIndentSize, line) => {
+const renderLine = (lastIndentSize, line, icons) => {
   let {indent, isQuote, toks, block} = line
   let text = ''
 
@@ -64,7 +65,7 @@ const renderLine = (lastIndentSize, line) => {
       case 'gyazo': {
         const url = tok.text
         text = [
-          `//image[${getGyazoId(url)}][][]{`, // [fileName][Caption]
+          `//image[${getGyazoId(url)}][][scale=0.5]{`, // [fileName][Caption]
           '//}'
         ].join('\n')
         break
@@ -72,7 +73,7 @@ const renderLine = (lastIndentSize, line) => {
       case 'gyazoWithLabel': {
         const url = tok.text.url
         text = [
-          `//image[${getGyazoId(url)}][][]{`, // [fileName][Caption]
+          `//image[${getGyazoId(url)}][][scale=0.5]{`, // [fileName][Caption]
           '//}'
         ].join('\n')
         break
@@ -98,7 +99,14 @@ const renderLine = (lastIndentSize, line) => {
         break
       }
       case 'icon': {
-        text += `(${tok.text})`
+        const iconNameLc = toLc(tok.text)
+        const idx = icons.iconNameLcs.indexOf(iconNameLc)
+        if (idx >= 0) {
+          const gyazoId = icons.iconIds[idx]
+          text += `@<icon>{icon-${gyazoId}}`
+        } else {
+          text += `(${tok.text})`
+        }
         break
       }
       case 'backquote': {

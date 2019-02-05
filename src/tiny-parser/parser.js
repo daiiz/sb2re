@@ -126,8 +126,6 @@ const detectGyazoIdsInLine = toks => {
   return res
 }
 
-// ページに含まれるアイコン画像のGyazoIdsを返す
-
 module.exports = {
   getIndentSize, splitToBracketToks, parseBackquotes,
   detectGyazoIdsInLine
