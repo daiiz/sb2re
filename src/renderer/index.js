@@ -58,16 +58,16 @@ const renderLine = (lastIndentSize, line) => {
     switch (tok.type) {
       case 'gyazo': {
         const url = tok.text
-        text += [
-          `//image[${getGyazoId(url)}][][scale=0.3]{`, // [fileName][Caption]
+        text = [
+          `//image[${getGyazoId(url)}][][scale=0.6]{`, // [fileName][Caption]
           '//}'
         ].join('\n')
         break
       }
       case 'gyazoWithLabel': {
         const url = tok.text.url
-        text += [
-          `//image[${getGyazoId(url)}][][scale=0.3]{`, // [fileName][Caption]
+        text = [
+          `//image[${getGyazoId(url)}][][scale=0.6]{`, // [fileName][Caption]
           '//}'
         ].join('\n')
         break
