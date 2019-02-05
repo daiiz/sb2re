@@ -36,7 +36,8 @@ for (const page of pages) {
   iconGyazoIds.push(...iconIds)
 
   // Re:VIEW記法に変換
-  const re = renderReview(page.title, res, gyazoId, {iconIds, iconNameLcs})
+  const links = topics.topics
+  const re = renderReview(page.title, res, gyazoId, {links, iconIds, iconNameLcs})
   writeReviewFile(page.title, re)
 }
 

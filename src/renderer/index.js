@@ -1,7 +1,7 @@
 const {getGyazoId} = require('../gyazo')
 const {toLc} = require('../writer/')
 
-const renderReview = (title, lines, gyazoId, icons = { iconIds: [], iconNameLcs: [] }) => {
+const renderReview = (title, lines, gyazoId, opts={links: [], iconIds: [], iconNameLcs: []}) => {
   const res = []
   if (gyazoId) {
     // ページの代表Gyazo画像idを記録
@@ -12,7 +12,7 @@ const renderReview = (title, lines, gyazoId, icons = { iconIds: [], iconNameLcs:
 
   let lastIndent = 0
   for (const line of lines) {
-    const [indentSize, re] = renderLine(lastIndent, line, icons)
+    const [indentSize, re] = renderLine(lastIndent, line, opts)
     lastIndent = indentSize
     res.push(re)
   }
@@ -20,7 +20,7 @@ const renderReview = (title, lines, gyazoId, icons = { iconIds: [], iconNameLcs:
   return res
 }
 
-const renderLine = (lastIndentSize, line, icons) => {
+const renderLine = (lastIndentSize, line, opts) => {
   let {indent, isQuote, toks, block} = line
   let text = ''
 
@@ -88,7 +88,12 @@ const renderLine = (lastIndentSize, line, icons) => {
         break
       }
       case 'internalLink': {
-        text += `@<ttb>{${tok.text}}`
+        const linkLc = toLc(tok.text)
+        if (opts.links.includes(linkLc)) {
+          text += `@<ttb>{${tok.text}} [@<chap>{${linkLc}}]`
+        } else {
+          text += `@<ttb>{${tok.text}}`
+        }
         break
       }
       case 'externalLink': {
@@ -100,9 +105,9 @@ const renderLine = (lastIndentSize, line, icons) => {
       }
       case 'icon': {
         const iconNameLc = toLc(tok.text)
-        const idx = icons.iconNameLcs.indexOf(iconNameLc)
+        const idx = opts.iconNameLcs.indexOf(iconNameLc)
         if (idx >= 0) {
-          const gyazoId = icons.iconIds[idx]
+          const gyazoId = opts.iconIds[idx]
           text += `@<icon>{icon-${gyazoId}}`
         } else {
           text += `(${tok.text})`
