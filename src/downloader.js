@@ -2,7 +2,7 @@ const request = require('request')
 const fs = require('fs')
 const imagesDir = './out/images'
 
-const skipIfExists = false
+const skipIfExists = true
 
 const downloadImages = (gyazoIds, callback, {size, prefix}) => {
   prefix = prefix || ''
@@ -11,7 +11,9 @@ const downloadImages = (gyazoIds, callback, {size, prefix}) => {
   } else {
     const gyazoId = gyazoIds.pop()
     // すでにfetch済みであればskip
-    if (skipIfExists && fs.existsSync(`${imagesDir}/${prefix}${gyazoId}.png`)) {
+    if (skipIfExists &&
+      (fs.existsSync(`${imagesDir}/${prefix}${gyazoId}.png`) ||
+      fs.existsSync(`${imagesDir}/${prefix}${gyazoId}.jpeg`))) {
       console.log(`> skip (${gyazoId})`)
       downloadImages(gyazoIds, callback, {size, prefix})
     } else {
