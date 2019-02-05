@@ -2,7 +2,7 @@ const request = require('request')
 const fs = require('fs')
 const imagesDir = './out/images'
 
-const skipIfExists = true
+const skipIfExists = false
 
 const downloadImages = (gyazoIds, callback, {size, prefix}) => {
   prefix = prefix || ''

@@ -21,7 +21,7 @@ const getGyazoUrlList = pageRes => {
     // line
     for (const tok of toks) {
       if (typeof tok === 'string') continue
-      if (tok.type === 'gyazo') {
+      if (tok.type === 'gyazo' || tok.type === 'gyazoWithLabel') {
         gayzoUrls.push(tok.text.url || tok.text)
       }
     }

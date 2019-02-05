@@ -129,8 +129,10 @@ const renderLine = (lastIndentSize, line, opts) => {
     }
   }
 
+
   if (isQuote) {
-    return [`//quote{`, text, `//}`].join('\n')
+    // console.log(isQuote, text.replace(/^\s+\*+\s+/, ''))
+    text = [`//quote{`, text.replace(/^\s+\*+\s+/, ''), `//}`].join('\n')
   } else {
     if (lastIndentSize === 0 && indent > 0) {
       text = ['', text].join('\n')
