@@ -65,7 +65,7 @@ const renderLine = (lastIndentSize, line, opts) => {
       case 'gyazo': {
         const url = tok.text
         text = [
-          `//image[${getGyazoId(url)}][][scale=0.5]{`, // [fileName][Caption]
+          `//image[${getGyazoId(url)}][][scale=0.65]{`, // [fileName][Caption]
           '//}'
         ].join('\n')
         break
@@ -73,7 +73,7 @@ const renderLine = (lastIndentSize, line, opts) => {
       case 'gyazoWithLabel': {
         const url = tok.text.url
         text = [
-          `//image[${getGyazoId(url)}][][scale=0.5]{`, // [fileName][Caption]
+          `//image[${getGyazoId(url)}][][scale=0.65]{`, // [fileName][Caption]
           '//}'
         ].join('\n')
         break
@@ -97,6 +97,7 @@ const renderLine = (lastIndentSize, line, opts) => {
         break
       }
       case 'externalLink': {
+        text += tok.text
         break
       }
       case 'externalLinkWithLabel': {
