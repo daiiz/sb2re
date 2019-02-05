@@ -9,7 +9,7 @@ const writeTxtFile = (path, strArr) => {
 }
 
 const writeReviewFile = (title, rePage) => {
-  const path = `${reviewDir}/${title}.re`
+  const path = `${reviewDir}/${title.replace(/\s/gi, '_')}.re`
   writeTxtFile(path, rePage)
 }
 
@@ -19,7 +19,7 @@ const writeCatalogYaml = ({topics}) => {
     'PREDEF:',
     '',
     'CHAPS:',
-    topics.map(t => `  - ${t}.re`).join('\n'),
+    topics.map(t => `  - ${t.replace(/\s/gi, '_')}.re`).join('\n'),
     '',
     'APPENDIX:',
     '',
