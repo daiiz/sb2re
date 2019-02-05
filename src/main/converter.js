@@ -13,14 +13,14 @@ const pages = readPages(topics)
 
 const gyazoUrls = []
 for (const page of pages) {
-  const res = parseLines(page.lines)
+  const [res, gyazoId] = parseLines(page.lines)
 
   // ダウンロードすべきGyazoのURLを収集
   const urls = getGyazoUrlList(res)
   gyazoUrls.push(...urls)
 
   // Re:VIEW記法に変換
-  const re = renderReview(page.title, res)
+  const re = renderReview(page.title, res, gyazoId)
   writeReviewFile(page.title, re)
 }
 

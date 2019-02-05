@@ -5,7 +5,7 @@ const parseLines = lines => {
   for (const line of lines) {
     parser.parseNewLine(line)
   }
-  return parser.result
+  return [parser.result, parser.topGyazoId]
 }
 
 const getGyazoUrlList = pageRes => {

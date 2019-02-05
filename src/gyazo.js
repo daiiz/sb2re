@@ -12,4 +12,8 @@ const getGyazoIds = urls => {
   return uniq(ids)
 }
 
-module.exports = {getGyazoId, getGyazoIds}
+const isGyazoUrl = text => {
+  return /^https:\/\/gyazo\.com\//.test(text)
+}
+
+module.exports = {getGyazoId, getGyazoIds, isGyazoUrl}

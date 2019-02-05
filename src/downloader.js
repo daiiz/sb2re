@@ -12,7 +12,7 @@ const downloadImages = (gyazoIds, callback) => {
       console.log(`> skip (${gyazoId})`)
       downloadImages(gyazoIds, callback)
     } else {
-      const url = `https://gyazo.com/${gyazoId}/raw`
+      const url = `https://gyazo.com/${gyazoId}/thumb/600`
       request.get(url)
         .on('response', res => {
           // const contentType = res.headers['content-type']
