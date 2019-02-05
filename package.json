@@ -5,7 +5,8 @@
   "main": "./src/index.js",
   "scripts": {
     "convert": "node ./src/main/converter.js",
-    "download-images": "node ./src/main/image-downloader.js"
+    "download-images": "node ./src/main/image-downloader.js",
+    "debug": "sh ./scripts/debug.sh"
   },
   "keywords": [
     "scrapbox",
