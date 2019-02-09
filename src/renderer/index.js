@@ -115,7 +115,7 @@ const renderLine = (lastIndentSize, line, opts) => {
         }
         break
       }
-      case 'backquote': {
+      case 'inlineCode': {
         text += `@<tt>{${tok.text}}`
         break
       }

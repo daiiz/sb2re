@@ -53,7 +53,7 @@ const detectBracketType = bracketText => {
 }
 
 const detectBackquoteType = bracketText => {
-  return ['backquote', bracketText]
+  return ['inlineCode', bracketText]
 }
 
 // "[","]"で囲まれた文字列の記法を特定しながら行をparseする
