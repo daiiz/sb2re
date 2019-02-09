@@ -11,7 +11,6 @@ const getGyazoUrlList = pageRes => {
     const toks = res.toks
     // line
     for (const tok of toks) {
-      if (typeof tok === 'string') continue
       if (tok.type === 'gyazo' || tok.type === 'gyazoWithLabel') {
         gayzoUrls.push(tok.text.url || tok.text)
       }
@@ -30,7 +29,6 @@ const detectIconGyazoIds = (pageRes, {topics}) => {
     const toks = res.toks
     // line
     for (const tok of toks) {
-      if (typeof tok === 'string') continue
       if (tok.type === 'icon') {
         const iconNameLc = toLc(tok.text)
         if (!topicsLc.includes(iconNameLc)) continue
