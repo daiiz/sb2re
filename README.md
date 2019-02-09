@@ -1,4 +1,7 @@
 # scrapbox2review
+
+UNOFFICIAL/EXPERIMENTAL
+
 https://scrapbox.io/teamj/ScrapboxコンテンツをReVIEW記法に変換
 
 ## Build
