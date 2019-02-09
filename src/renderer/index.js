@@ -1,10 +1,18 @@
-const renderReview = (title, lines) => {
+const {getGyazoId} = require('../gyazo')
+const {toLc} = require('../writer/')
+
+const renderReview = (title, lines, gyazoId, opts={links: [], iconIds: [], iconNameLcs: []}) => {
   const res = []
+  if (gyazoId) {
+    // ページの代表Gyazo画像idを記録
+    res.push(`#@# ${gyazoId} #@#`)
+    res.push('')
+  }
   res.push(`= ${title}`)
 
   let lastIndent = 0
   for (const line of lines) {
-    const [indentSize, re] = renderLine(lastIndent, line)
+    const [indentSize, re] = renderLine(lastIndent, line, opts)
     lastIndent = indentSize
     res.push(re)
   }
@@ -12,7 +20,7 @@ const renderReview = (title, lines) => {
   return res
 }
 
-const renderLine = (lastIndentSize, line) => {
+const renderLine = (lastIndentSize, line, opts) => {
   let {indent, isQuote, toks, block} = line
   let text = ''
 
@@ -55,6 +63,19 @@ const renderLine = (lastIndentSize, line) => {
   for (const tok of toks) {
     switch (tok.type) {
       case 'gyazo': {
+        const url = tok.text
+        text = [
+          `//image[${getGyazoId(url)}][][scale=0.5]{`, // [fileName][Caption]
+          '//}'
+        ].join('\n')
+        break
+      }
+      case 'gyazoWithLabel': {
+        const url = tok.text.url
+        text = [
+          `//image[${getGyazoId(url)}][][scale=0.5]{`, // [fileName][Caption]
+          '//}'
+        ].join('\n')
         break
       }
       case 'bold': {
@@ -62,22 +83,36 @@ const renderLine = (lastIndentSize, line) => {
         break
       }
       case 'italic': {
-        text += `@<i>{${tok.text}}`
+        // text += `@<i>{${tok.text}}`
+        text += tok.text
         break
       }
       case 'internalLink': {
-        text += `@<ttb>{${tok.text}}`
+        const linkLc = toLc(tok.text)
+        if (opts.links.includes(linkLc)) {
+          text += `@<ttb>{${tok.text}} [@<chap>{${linkLc}}]`
+        } else {
+          text += `@<ttb>{${tok.text}}`
+        }
         break
       }
       case 'externalLink': {
+        text += tok.text
         break
       }
       case 'externalLinkWithLabel': {
-        text += tok.text.label
+        text += tok.text.label //
         break
       }
       case 'icon': {
-        text += `(${tok.text})`
+        const iconNameLc = toLc(tok.text)
+        const idx = opts.iconNameLcs.indexOf(iconNameLc)
+        if (idx >= 0) {
+          const gyazoId = opts.iconIds[idx]
+          text += `@<icon>{icon-${gyazoId}}`
+        } else {
+          text += `(${tok.text})`
+        }
         break
       }
       case 'backquote': {
@@ -94,8 +129,10 @@ const renderLine = (lastIndentSize, line) => {
     }
   }
 
+
   if (isQuote) {
-    return [`//quote{`, text, `//}`].join('\n')
+    // console.log(isQuote, text.replace(/^\s+\*+\s+/, ''))
+    text = [`//quote{`, text.replace(/^\s+\*+\s+/, ''), `//}`].join('\n')
   } else {
     if (lastIndentSize === 0 && indent > 0) {
       text = ['', text].join('\n')

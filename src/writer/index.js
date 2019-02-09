@@ -2,6 +2,10 @@ const fs = require('fs')
 
 const reviewDir = './out/re'
 
+const toLc = str => {
+  return str.toLowerCase().replace(/\s/gi, '_')
+}
+
 const writeTxtFile = (path, strArr) => {
   if (path.startsWith('/')) return
   fs.writeFileSync(path, strArr.join('\n'))
@@ -9,7 +13,7 @@ const writeTxtFile = (path, strArr) => {
 }
 
 const writeReviewFile = (title, rePage) => {
-  const path = `${reviewDir}/${title}.re`
+  const path = `${reviewDir}/${toLc(title)}.re`
   writeTxtFile(path, rePage)
 }
 
@@ -19,7 +23,7 @@ const writeCatalogYaml = ({topics}) => {
     'PREDEF:',
     '',
     'CHAPS:',
-    topics.map(t => `  - ${t}.re`),
+    topics.map(t => `  - ${toLc(t)}.re`).join('\n'),
     '',
     'APPENDIX:',
     '',
@@ -29,4 +33,4 @@ const writeCatalogYaml = ({topics}) => {
   writeTxtFile(path, txt)
 }
 
-module.exports = {writeTxtFile, writeReviewFile, writeCatalogYaml}
+module.exports = {writeTxtFile, writeReviewFile, writeCatalogYaml, toLc}

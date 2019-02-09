@@ -1,3 +1,5 @@
+const {isGyazoUrl, getGyazoId} = require('../gyazo')
+
 // 字下げ幅と引用であるかを把握する
 const getIndentSize = text => {
   const pattern = /^\s+/
@@ -22,10 +24,6 @@ const isUrl = text => {
   return /^https?:\/\//.test(text)
 }
 
-const isGyazoUrl = text => {
-  return /^https:\/\/gyazo\.com\//.test(text)
-}
-
 // 括弧に囲まれた文字列を受け取り、記法の種類を特定する
 // 装飾記号を除いたtextを返す
 const detectBracketType = bracketText => {
@@ -44,9 +42,9 @@ const detectBracketType = bracketText => {
     // ラベル付きリンク
     const [a, b] = bracketText.split(' ')
     if (isUrl(a)) {
-      return [isGyazoUrl(a) ? 'gyazo' : 'externalLinkWithLabel', {url: a, label: b}]
+      return [isGyazoUrl(a) ? 'gyazoWithLabel' : 'externalLinkWithLabel', {url: a, label: b}]
     } else if (isUrl(b)) {
-      return [isGyazoUrl(b) ? 'gyazo' : 'externalLinkWithLabel', {url: b, label: a}]
+      return [isGyazoUrl(b) ? 'gyazoWithLabel' : 'externalLinkWithLabel', {url: b, label: a}]
     } else {
       return ['internalLink', bracketText]
     }
@@ -110,4 +108,25 @@ const parseBackquotes = toks => {
   }
 }
 
-module.exports = {getIndentSize, splitToBracketToks, parseBackquotes}
+// 行に含まれる画像のGyazoIdsを返す
+const detectGyazoIdsInLine = toks => {
+  const res = []
+  for (const tok of toks) {
+    switch (tok.type) {
+      case 'gyazo': {
+        res.push(getGyazoId(tok.text))
+        break
+      }
+      case 'gyazoWithLabel': {
+        res.push(getGyazoId(tok.text.url))
+        break
+      }
+    }
+  }
+  return res
+}
+
+module.exports = {
+  getIndentSize, splitToBracketToks, parseBackquotes,
+  detectGyazoIdsInLine
+}
