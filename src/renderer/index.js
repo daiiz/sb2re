@@ -9,6 +9,7 @@ const renderReview = (title, lines, gyazoId, opts={links: [], iconIds: [], iconN
     res.push('')
   }
   res.push(`= ${title}`)
+  res.push('')
 
   let lastIndent = 0
   for (const line of lines) {
@@ -74,7 +75,13 @@ const renderLine = (lastIndentSize, line, opts) => {
         break
       }
       case 'bold': {
-        text += [`== ${tok.text}`, ''].join('\n')
+        if (text.length === 0) {
+          // 見出しとして解釈
+          text = [`== ${tok.text}`, ''].join('\n')
+        } else {
+          // 下線
+          text += `@<u>{${tok.text}}`
+        }
         break
       }
       case 'italic': {
@@ -84,9 +91,9 @@ const renderLine = (lastIndentSize, line, opts) => {
       case 'internalLink': {
         const linkLc = toLc(tok.text)
         if (opts.links.includes(linkLc)) {
-          text += `@<ttb>{${tok.text}} [@<chap>{${linkLc}}]`
+          text += `@<tt>{${tok.text}} [@<chap>{${linkLc}}]`
         } else {
-          text += `@<ttb>{${tok.text}}`
+          text += `@<tt>{${tok.text}}`
         }
         break
       }
