@@ -64,7 +64,7 @@ const splitToToks = (text, bracketOpen, bracketClose, bracketOpenLen, bracketClo
     const posOpen = text.search(bracketOpen)
     if (posOpen === -1) {
       toks.push({type: 'plain', text})
-      text = ''
+      // text = ''
       break
     }
 
@@ -76,7 +76,7 @@ const splitToToks = (text, bracketOpen, bracketClose, bracketOpenLen, bracketClo
     const posClose = text.search(bracketClose)
     if (posClose === -1) {
       toks.push({type: 'plain', text})
-      text = ''
+      // text = ''
       break
     }
 
@@ -89,7 +89,6 @@ const splitToToks = (text, bracketOpen, bracketClose, bracketOpenLen, bracketClo
 
   return toks
 }
-
 
 // splitToBracketToksによってplainText判定されたtokをさらに調べる
 const parseBackquotes = toks => {
