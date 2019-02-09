@@ -111,7 +111,7 @@ const renderLine = (lastIndentSize, line, opts) => {
         break
       }
       case 'inlineCode': {
-        text += `@<tt>{${tok.text}}`
+        text += `@<code>{${tok.text}}`
         break
       }
       case 'math': {
