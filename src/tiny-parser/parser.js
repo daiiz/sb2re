@@ -54,7 +54,7 @@ const splitToToks = (text, bracketOpen, bracketClose, bracketOpenLen, bracketClo
   while (text.length > 0) {
     const posOpen = text.search(bracketOpen)
     if (posOpen === -1) {
-      toks.push(text)
+      toks.push({type: 'plain', text})
       text = ''
       break
     }
@@ -66,7 +66,7 @@ const splitToToks = (text, bracketOpen, bracketClose, bracketOpenLen, bracketClo
 
     const posClose = text.search(bracketClose)
     if (posClose === -1) {
-      toks.push({type: '', text})
+      toks.push({type: 'plain', text})
       text = ''
       break
     }

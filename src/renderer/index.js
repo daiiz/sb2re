@@ -53,10 +53,10 @@ const renderLine = (lastIndentSize, line, opts) => {
     return [indent, text]
   }
 
-  toks = toks.map(t => {
-    if (typeof t === 'string') return {type: 'plain', text: t}
-    return t
-  })
+  // toks = toks.map(t => {
+  //   if (typeof t === 'string') return {type: 'plain', text: t}
+  //   return t
+  // })
 
   if (indent > 0) text += `  ${'*'.repeat(indent)} `
   // Ref. tiny-parser/lib.js
