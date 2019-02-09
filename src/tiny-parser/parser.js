@@ -1,4 +1,4 @@
-const { isGyazoUrl, getGyazoId } = require('../gyazo')
+const { isGyazoUrl } = require('../gyazo')
 const { isUrl, shiftText, divideText } = require('./lib')
 const { toLc } = require('../writer/')
 
@@ -100,25 +100,4 @@ const parseBackquotes = toks => {
   }
 }
 
-// 行に含まれる画像のGyazoIdsを返す
-const detectGyazoIdsInLine = toks => {
-  const res = []
-  for (const tok of toks) {
-    switch (tok.type) {
-      case 'gyazo': {
-        res.push(getGyazoId(tok.text))
-        break
-      }
-      case 'gyazoWithLabel': {
-        res.push(getGyazoId(tok.text.url))
-        break
-      }
-    }
-  }
-  return res
-}
-
-module.exports = {
-  getIndentSize, splitToBracketToks, parseBackquotes,
-  detectGyazoIdsInLine
-}
+module.exports = {getIndentSize, splitToBracketToks, parseBackquotes}

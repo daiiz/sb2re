@@ -1,8 +1,6 @@
 const {flattenDeep} = require('lodash')
-const {
-  getIndentSize, splitToBracketToks, parseBackquotes,
-  detectGyazoIdsInLine
-} = require('./parser')
+const {getIndentSize, splitToBracketToks, parseBackquotes} = require('./parser')
+const {detectGyazoIdsInLine} = require('./gyazo')
 
 class TinyParser {
   constructor() {
