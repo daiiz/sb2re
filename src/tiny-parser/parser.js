@@ -4,6 +4,12 @@ const { toLc } = require('../writer/')
 
 const scrapboxUrl = 'https://scrapbox.io'
 
+const BOLD = /^\*+\s+/
+const ITALIC = /^\/+\s+/
+const STRIKE = /^\-\s+/
+const MATH = /^\$\s+/
+const ICON = /\.icon$/
+
 // 字下げ幅と引用であるかを把握する
 const getIndentSize = text => {
   const pattern = /^\s+/
@@ -21,11 +27,11 @@ const getIndentSize = text => {
 // 括弧に囲まれた文字列を受け取り、記法の種類を特定する
 // 装飾記号を除いたtextを返す
 const detectBracketType = bracketText => {
-  if (/^\*+\s+/.test(bracketText)) return ['bold', bracketText.replace(/^\*+\s+/, '')]
-  if (/^\/+\s+/.test(bracketText)) return ['italic', bracketText.replace(/^\/+\s+/, '')]
-  if (/^\-\s+/.test(bracketText)) return ['strike', bracketText.replace(/^\-\s+/, '')]
-  if (/^\$\s+/.test(bracketText)) return ['math', bracketText.replace(/^\$\s+/, '')]
-  if (bracketText.endsWith('.icon')) return ['icon', bracketText.replace(/\.icon$/, '')]
+  if (BOLD.test(bracketText)) return ['bold', bracketText.replace(BOLD, '')]
+  if (ITALIC.test(bracketText)) return ['italic', bracketText.replace(ITALIC, '')]
+  if (STRIKE.test(bracketText)) return ['strike', bracketText.replace(STRIKE, '')]
+  if (MATH.test(bracketText)) return ['math', bracketText.replace(MATH, '')]
+  if (ICON.test(bracketText)) return ['icon', bracketText.replace(ICON, '')]
   if (bracketText.startsWith('/')) {
     return ['externalLinkWithLabel', {
       label: bracketText,
@@ -34,19 +40,15 @@ const detectBracketType = bracketText => {
   }
   if (bracketText.includes(' ')) {
     // type: internalLink | gyazoWithLabel | externalLinkWithLabel | externalLink
-    const [type, value] = divideText(bracketText)
-    return [type, value]
+    return divideText(bracketText)
   } else {
-    if (isUrl(bracketText)) {
-      return [isGyazoUrl(bracketText) ? 'gyazo' : 'externalLink', bracketText]
-    }
-    return ['internalLink', bracketText]
+    return isUrl(bracketText)
+      ? [isGyazoUrl(bracketText) ? 'gyazo' : 'externalLink', bracketText]
+      : ['internalLink', bracketText]
   }
 }
 
-const detectBackquoteType = bracketText => {
-  return ['inlineCode', bracketText]
-}
+const detectBackquoteType = bracketText => ['inlineCode', bracketText]
 
 // "[","]"で囲まれた文字列の記法を特定しながら行をparseする
 const splitToBracketToks = text => {
@@ -64,7 +66,6 @@ const splitToToks = (text, bracketOpen, bracketClose, bracketOpenLen, bracketClo
     const posOpen = text.search(bracketOpen)
     if (posOpen === -1) {
       toks.push({type: 'plain', text})
-      // text = ''
       break
     }
 
@@ -76,7 +77,6 @@ const splitToToks = (text, bracketOpen, bracketClose, bracketOpenLen, bracketClo
     const posClose = text.search(bracketClose)
     if (posClose === -1) {
       toks.push({type: 'plain', text})
-      // text = ''
       break
     }
 
@@ -94,8 +94,7 @@ const splitToToks = (text, bracketOpen, bracketClose, bracketOpenLen, bracketClo
 const parseBackquotes = toks => {
   for (let i = 0; i < toks.length; i++) {
     const tok = toks[i]
-    if (typeof tok !== 'string') continue
-    toks[i] = splitToBackquoteToks(tok)
+    if (tok.type === 'plain') toks[i] = splitToBackquoteToks(tok.text)
   }
 }
 
