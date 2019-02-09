@@ -2,7 +2,7 @@ const {uniq} = require('lodash')
 const {parse} = require('url')
 
 const GYAZO_IMAGE_SIZE = 600
-const GYAZO_ICON_SIZE = 13
+const GYAZO_ICON_SIZE = 14
 
 const getGyazoId = url => {
   const {host, pathname} = parse(url)
