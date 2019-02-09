@@ -16,6 +16,7 @@
   "author": "daiiz",
   "license": "MIT",
   "dependencies": {
+    "jimp": "^0.6.0",
     "lodash": "^4.17.11",
     "request": "^2.88.0"
   }
