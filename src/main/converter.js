@@ -1,8 +1,9 @@
 const {uniq} = require('lodash')
 const {getTopics} = require('../reader/readTopics')
 const {readPages} = require('../reader/readJsons')
-const {writeTxtFile, writeReviewFile, writeCatalogYaml} = require('../writer')
-const {parseLines, getGyazoUrlList, detectIconGyazoIds} = require('../tiny-parser')
+const {writeTxtFile, writeReviewFile, writeCatalogYaml, toLc} = require('../writer/')
+const {parseLines} = require('../tiny-parser/')
+const {getGyazoUrlList, detectIconGyazoIds} = require('../tiny-parser/gyazo')
 const {renderReview} = require('../renderer')
 const {getGyazoIds} = require('../gyazo')
 const gyazoDir = './out/images'
@@ -36,7 +37,7 @@ for (const page of pages) {
   iconGyazoIds.push(...iconIds)
 
   // Re:VIEW記法に変換
-  const links = topics.topics
+  const links = topics.topics.map(toLc)
   const re = renderReview(page.title, res, gyazoId, {links, iconIds, iconNameLcs})
   writeReviewFile(page.title, re)
 }

@@ -6,6 +6,7 @@
   "scripts": {
     "convert": "node ./src/main/converter.js",
     "download-images": "node ./src/main/image-downloader.js",
+    "clear-images": "rm ./out/images/*.png && rm ./out/images/*.jpg",
     "debug": "sh ./scripts/debug.sh"
   },
   "keywords": [
@@ -15,6 +16,7 @@
   "author": "daiiz",
   "license": "MIT",
   "dependencies": {
+    "jimp": "^0.6.0",
     "lodash": "^4.17.11",
     "request": "^2.88.0"
   }

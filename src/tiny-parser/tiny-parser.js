@@ -22,8 +22,6 @@ class TinyParser {
   }
 
   parseBlock (indent, text, isStart) {
-
-    // if (text.length === 0 || text.length === this._blockIndent) {
     if (!isStart && indent <= this._blockIndent) {
       this._res.push({
         block: this._opendBlock,
@@ -32,7 +30,8 @@ class TinyParser {
       })
       this.initBlockState()
     } else {
-      this._blockPool.push(text.trim())
+      // 先頭の空白を1個だけ除去
+      this._blockPool.push(text.replace(/^\s/, ''))
     }
   }
 

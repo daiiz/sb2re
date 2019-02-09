@@ -9,138 +9,132 @@ const renderReview = (title, lines, gyazoId, opts={links: [], iconIds: [], iconN
     res.push('')
   }
   res.push(`= ${title}`)
+  res.push('')
 
-  let lastIndent = 0
+  const renderer = new Renderer()
   for (const line of lines) {
-    const [indentSize, re] = renderLine(lastIndent, line, opts)
-    lastIndent = indentSize
+    const re = renderer.renderLine(line, opts)
     res.push(re)
   }
 
   return res
 }
 
-const renderLine = (lastIndentSize, line, opts) => {
-  let {indent, isQuote, toks, block} = line
-  let text = ''
-
-  if (block) {
-    switch (block) {
-      case 'codeblock': {
-        const head = toks[0]
-        toks.shift()
-        if (head.startsWith('COLUMN')) {
-          text += [
-            '',
-            `====[column] ${head.replace(/^COLUMN:/, '')}`,
-            '',
-            toks.join(''),
-            '',
-            `====[/column]`,
-            ''
-          ].join('\n')
-        } else {
-          text += [
-            `//source[${head}]{`,
-            ...toks,
-            `//}`,
-            ''
-          ].join('\n')
-        }
-        break
-      }
-    }
-    return [indent, text]
+class Renderer {
+  constructor() {
+    this.lastIndent = 0
   }
 
-  toks = toks.map(t => {
-    if (typeof t === 'string') return {type: 'plain', text: t}
-    return t
-  })
+  renderLine (line, opts) {
+    let {indent, isQuote, toks, block} = line
+    let text = ''
 
-  if (indent > 0) text += `  ${'*'.repeat(indent)} `
-  // Ref. tiny-parser/lib.js
-  for (const tok of toks) {
-    switch (tok.type) {
-      case 'gyazo': {
-        const url = tok.text
-        text = [
-          `//image[${getGyazoId(url)}][][scale=0.5]{`, // [fileName][Caption]
-          '//}'
-        ].join('\n')
-        break
-      }
-      case 'gyazoWithLabel': {
-        const url = tok.text.url
-        text = [
-          `//image[${getGyazoId(url)}][][scale=0.5]{`, // [fileName][Caption]
-          '//}'
-        ].join('\n')
-        break
-      }
-      case 'bold': {
-        text += [`== ${tok.text}`, ''].join('\n')
-        break
-      }
-      case 'italic': {
-        // text += `@<i>{${tok.text}}`
-        text += tok.text
-        break
-      }
-      case 'internalLink': {
-        const linkLc = toLc(tok.text)
-        if (opts.links.includes(linkLc)) {
-          text += `@<ttb>{${tok.text}} [@<chap>{${linkLc}}]`
-        } else {
-          text += `@<ttb>{${tok.text}}`
+    if (block) {
+      switch (block) {
+        case 'codeblock': {
+          const head = toks[0]
+          toks.shift()
+          if (head.startsWith('COLUMN')) {
+            text += [
+              '',
+              `====[column] ${head.replace(/^COLUMN:/, '')}`,
+              '', toks.join(''), '',
+              `====[/column]`,
+              ''
+            ].join('\n')
+          } else {
+            text += [
+              `//source[${head}]{`, ...toks, `//}`,
+              ''
+            ].join('\n')
+          }
+          break
         }
-        break
       }
-      case 'externalLink': {
-        text += tok.text
-        break
-      }
-      case 'externalLinkWithLabel': {
-        text += tok.text.label //
-        break
-      }
-      case 'icon': {
-        const iconNameLc = toLc(tok.text)
-        const idx = opts.iconNameLcs.indexOf(iconNameLc)
-        if (idx >= 0) {
-          const gyazoId = opts.iconIds[idx]
-          text += `@<icon>{icon-${gyazoId}}`
-        } else {
+      return text
+    }
+
+    if (indent > 0) text += `  ${'*'.repeat(indent)} `
+    // Ref. tiny-parser/parser.js
+    for (const tok of toks) {
+      switch (tok.type) {
+        case 'gyazo': {
+          const url = tok.text
+          text = [`//image[${getGyazoId(url)}][][scale=0.5]{`, '//}'].join('\n')
+          break
+        }
+        case 'gyazoWithLabel': {
+          const {label, url} = tok.text
+          text = [`//image[${getGyazoId(url)}][][scale=0.5]{`, '//}', label, ''].join('\n')
+          break
+        }
+        case 'bold': {
+          if (text.length === 0) {
+            // 見出しとして解釈
+            text = [`== ${tok.text}`, ''].join('\n')
+          } else {
+            text += `@<tt>{${tok.text}}`
+          }
+          break
+        }
+        case 'italic': {
+          text += `@<i>{${tok.text}}`
+          break
+        }
+        case 'internalLink': {
+          const linkLc = toLc(tok.text)
+          if (opts.links.includes(linkLc)) {
+            text += `@<u>{${tok.text}} [@<chap>{${linkLc}}]`
+          } else {
+            text += tok.text
+          }
+          break
+        }
+        case 'externalLink': {
+          text += `@<href>{${tok.text}}`
+          break
+        }
+        case 'externalLinkWithLabel': {
+          const { url, label } = tok.text
+          text += `@<href>{${url}, ${label}}`
+          break
+        }
+        case 'icon': {
+          const iconNameLc = toLc(tok.text)
+          const idx = opts.iconNameLcs.indexOf(iconNameLc)
+          if (idx >= 0) {
+            const gyazoId = opts.iconIds[idx]
+            text += `@<icon>{icon-${gyazoId}}`
+          } else {
+            text += `(${tok.text})`
+          }
+          break
+        }
+        case 'inlineCode': {
+          text += `@<code>{${tok.text}}`
+          break
+        }
+        case 'math': {
           text += `(${tok.text})`
+          break
         }
-        break
-      }
-      case 'backquote': {
-        text += `@<tt>{${tok.text}}`
-        break
-      }
-      case 'math': {
-        break
-      }
-      default: {
-        // plainなど
-        text += tok.text
+        default: {
+          // plainなど
+          text += tok.text
+        }
       }
     }
-  }
 
-
-  if (isQuote) {
-    // console.log(isQuote, text.replace(/^\s+\*+\s+/, ''))
-    text = [`//quote{`, text.replace(/^\s+\*+\s+/, ''), `//}`].join('\n')
-  } else {
-    if (lastIndentSize === 0 && indent > 0) {
-      text = ['', text].join('\n')
+    if (isQuote) {
+      text = [`//quote{`, text.replace(/^\s+\*+\s+/, ''), `//}`].join('\n')
+    } else {
+      if (this.lastIndent === 0 && indent > 0) {
+        text = ['', text].join('\n')
+      }
     }
-    // if (text.length === 0) text += '　' + br
+    this.lastIndent = indent
+    return text
   }
-
-  return [indent, text]
 }
 
 module.exports = {renderReview}

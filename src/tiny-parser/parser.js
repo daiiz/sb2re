@@ -1,4 +1,14 @@
-const {isGyazoUrl, getGyazoId} = require('../gyazo')
+const { isGyazoUrl, getGyazoId } = require('../gyazo')
+const { isUrl, shiftText, divideText } = require('./lib')
+const { toLc } = require('../writer/')
+
+const scrapboxUrl = 'https://scrapbox.io'
+
+const BOLD = /^\*+\s+/
+const ITALIC = /^\/+\s+/
+const STRIKE = /^\-\s+/
+const MATH = /^\$\s+/
+const ICON = /\.icon$/
 
 // 字下げ幅と引用であるかを把握する
 const getIndentSize = text => {
@@ -14,47 +24,31 @@ const getIndentSize = text => {
   return [indentSize, isQuote, text]
 }
 
-const shiftText = (strText, shiftNum) => {
-  const text = strText.split('')
-  for (let i = 0; i < shiftNum; i++) text.shift()
-  return text.join('')
-}
-
-const isUrl = text => {
-  return /^https?:\/\//.test(text)
-}
-
 // 括弧に囲まれた文字列を受け取り、記法の種類を特定する
 // 装飾記号を除いたtextを返す
 const detectBracketType = bracketText => {
-  if (bracketText.endsWith('.icon')) return ['icon', bracketText.replace(/\.icon$/, '')]
-  if (bracketText.startsWith('*')) return ['bold', bracketText.replace(/^\*+\s+/, '')]
-  if (bracketText.startsWith('/')) return ['italic', bracketText.replace(/^\/+\s+/, '')]
-  if (bracketText.startsWith('-')) return ['strike', bracketText.replace(/^\-\s+/, '')]
-  if (bracketText.startsWith('$')) return ['math', bracketText.replace(/^\$\s+/, '')]
-  if (!bracketText.includes(' ')) {
-    if (isUrl(bracketText)) {
-      return [isGyazoUrl(bracketText) ? 'gyazo' : 'externalLink', bracketText]
-    }
-    return ['internalLink', bracketText]
+  if (BOLD.test(bracketText)) return ['bold', bracketText.replace(BOLD, '')]
+  if (ITALIC.test(bracketText)) return ['italic', bracketText.replace(ITALIC, '')]
+  if (STRIKE.test(bracketText)) return ['strike', bracketText.replace(STRIKE, '')]
+  if (MATH.test(bracketText)) return ['math', bracketText.replace(MATH, '')]
+  if (ICON.test(bracketText)) return ['icon', bracketText.replace(ICON, '')]
+  if (bracketText.startsWith('/')) {
+    return ['externalLinkWithLabel', {
+      label: bracketText,
+      url: `${scrapboxUrl}${toLc(bracketText)}`
+    }]
   }
-  if (bracketText.includes(' ') && bracketText.split(' ').length >= 2) {
-    // ラベル付きリンク
-    const [a, b] = bracketText.split(' ')
-    if (isUrl(a)) {
-      return [isGyazoUrl(a) ? 'gyazoWithLabel' : 'externalLinkWithLabel', {url: a, label: b}]
-    } else if (isUrl(b)) {
-      return [isGyazoUrl(b) ? 'gyazoWithLabel' : 'externalLinkWithLabel', {url: b, label: a}]
-    } else {
-      return ['internalLink', bracketText]
-    }
+  if (bracketText.includes(' ')) {
+    // type: internalLink | gyazoWithLabel | externalLinkWithLabel | externalLink
+    return divideText(bracketText)
+  } else {
+    return isUrl(bracketText)
+      ? [isGyazoUrl(bracketText) ? 'gyazo' : 'externalLink', bracketText]
+      : ['internalLink', bracketText]
   }
-  return ['bracket', bracketText]
 }
 
-const detectBackquoteType = bracketText => {
-  return ['backquote', bracketText]
-}
+const detectBackquoteType = bracketText => ['inlineCode', bracketText]
 
 // "[","]"で囲まれた文字列の記法を特定しながら行をparseする
 const splitToBracketToks = text => {
@@ -71,20 +65,20 @@ const splitToToks = (text, bracketOpen, bracketClose, bracketOpenLen, bracketClo
   while (text.length > 0) {
     const posOpen = text.search(bracketOpen)
     if (posOpen === -1) {
-      toks.push(text)
-      text = ''
+      toks.push({type: 'plain', text})
       break
     }
 
     const plainText = text.substring(0, posOpen)
     text = shiftText(text, plainText.length + bracketOpenLen)
 
-    if (plainText.length > 0) toks.push(plainText)
+    if (plainText.length > 0) {
+      toks.push({type: 'plain', text: plainText})
+    }
 
     const posClose = text.search(bracketClose)
     if (posClose === -1) {
-      toks.push({type: '', text})
-      text = ''
+      toks.push({type: 'plain', text})
       break
     }
 
@@ -98,13 +92,11 @@ const splitToToks = (text, bracketOpen, bracketClose, bracketOpenLen, bracketClo
   return toks
 }
 
-
 // splitToBracketToksによってplainText判定されたtokをさらに調べる
 const parseBackquotes = toks => {
   for (let i = 0; i < toks.length; i++) {
     const tok = toks[i]
-    if (typeof tok !== 'string') continue
-    toks[i] = splitToBackquoteToks(tok)
+    if (tok.type === 'plain') toks[i] = splitToBackquoteToks(tok.text)
   }
 }
 

@@ -15,7 +15,7 @@ $ npm run convert
 ```
 
 Re:VIEW files will be generated at `./out/re/`.<br>
-A URL list of Gyazo images to download will be generated at `./out/images/gyazo-ids.txt` and `./out/images/gyazo-icons-ids.txt`.
+An id list of Gyazo images will be generated at `./out/images/gyazo-ids.txt` and `./out/images/gyazo-icons-ids.txt`.
 Run following to download the images.
 ```
 $ npm run download-images
