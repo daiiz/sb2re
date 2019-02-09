@@ -1,4 +1,5 @@
-const {isGyazoUrl, getGyazoId} = require('../gyazo')
+const { isGyazoUrl, getGyazoId } = require('../gyazo')
+const { isUrl, shiftText, divideText } = require('./lib')
 
 // 字下げ幅と引用であるかを把握する
 const getIndentSize = text => {
@@ -14,16 +15,6 @@ const getIndentSize = text => {
   return [indentSize, isQuote, text]
 }
 
-const shiftText = (strText, shiftNum) => {
-  const text = strText.split('')
-  for (let i = 0; i < shiftNum; i++) text.shift()
-  return text.join('')
-}
-
-const isUrl = text => {
-  return /^https?:\/\//.test(text)
-}
-
 // 括弧に囲まれた文字列を受け取り、記法の種類を特定する
 // 装飾記号を除いたtextを返す
 const detectBracketType = bracketText => {
@@ -32,24 +23,31 @@ const detectBracketType = bracketText => {
   if (bracketText.startsWith('/')) return ['italic', bracketText.replace(/^\/+\s+/, '')]
   if (bracketText.startsWith('-')) return ['strike', bracketText.replace(/^\-\s+/, '')]
   if (bracketText.startsWith('$')) return ['math', bracketText.replace(/^\$\s+/, '')]
-  if (!bracketText.includes(' ')) {
+  // if (!bracketText.includes(' ')) {
+  //   if (isUrl(bracketText)) {
+  //     return [isGyazoUrl(bracketText) ? 'gyazo' : 'externalLink', bracketText]
+  //   }
+  //   return ['internalLink', bracketText]
+  // }
+  if (bracketText.includes(' ')) {
+    // ラベル付きリンク
+    const [type, value] = divideText(bracketText)
+    return [type, value]
+    // const [a, b] = divideText(bracketText) // bracketText.split(' ')
+    // if (isUrl(a)) {
+    //   return [isGyazoUrl(a) ? 'gyazoWithLabel' : 'externalLinkWithLabel', {url: a, label: b}]
+    // } else if (isUrl(b)) {
+    //   return [isGyazoUrl(b) ? 'gyazoWithLabel' : 'externalLinkWithLabel', {url: b, label: a}]
+    // } else {
+    //   return ['internalLink', bracketText]
+    // }
+  } else {
     if (isUrl(bracketText)) {
       return [isGyazoUrl(bracketText) ? 'gyazo' : 'externalLink', bracketText]
     }
     return ['internalLink', bracketText]
   }
-  if (bracketText.includes(' ') && bracketText.split(' ').length >= 2) {
-    // ラベル付きリンク
-    const [a, b] = bracketText.split(' ')
-    if (isUrl(a)) {
-      return [isGyazoUrl(a) ? 'gyazoWithLabel' : 'externalLinkWithLabel', {url: a, label: b}]
-    } else if (isUrl(b)) {
-      return [isGyazoUrl(b) ? 'gyazoWithLabel' : 'externalLinkWithLabel', {url: b, label: a}]
-    } else {
-      return ['internalLink', bracketText]
-    }
-  }
-  return ['bracket', bracketText]
+  // return ['bracket', bracketText]
 }
 
 const detectBackquoteType = bracketText => {
