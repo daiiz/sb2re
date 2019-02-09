@@ -78,8 +78,7 @@ const renderLine = (lastIndentSize, line, opts) => {
         break
       }
       case 'italic': {
-        // text += `@<i>{${tok.text}}`
-        text += tok.text
+        text += `@<i>{${tok.text}}`
         break
       }
       case 'internalLink': {
@@ -92,11 +91,12 @@ const renderLine = (lastIndentSize, line, opts) => {
         break
       }
       case 'externalLink': {
-        text += tok.text
+        text += `@<href>{${tok.text}}`
         break
       }
       case 'externalLinkWithLabel': {
-        text += tok.text.label //
+        const { url, label } = tok.text
+        text += `@<href>{${url}, ${label}}`
         break
       }
       case 'icon': {
@@ -127,13 +127,11 @@ const renderLine = (lastIndentSize, line, opts) => {
 
 
   if (isQuote) {
-    // console.log(isQuote, text.replace(/^\s+\*+\s+/, ''))
     text = [`//quote{`, text.replace(/^\s+\*+\s+/, ''), `//}`].join('\n')
   } else {
     if (lastIndentSize === 0 && indent > 0) {
       text = ['', text].join('\n')
     }
-    // if (text.length === 0) text += '　' + br
   }
 
   return [indent, text]

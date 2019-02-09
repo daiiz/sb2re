@@ -1,5 +1,8 @@
 const { isGyazoUrl, getGyazoId } = require('../gyazo')
 const { isUrl, shiftText, divideText } = require('./lib')
+const { toLc } = require('../writer/')
+
+const scrapboxUrl = 'https://scrapbox.io'
 
 // 字下げ幅と引用であるかを把握する
 const getIndentSize = text => {
@@ -18,11 +21,17 @@ const getIndentSize = text => {
 // 括弧に囲まれた文字列を受け取り、記法の種類を特定する
 // 装飾記号を除いたtextを返す
 const detectBracketType = bracketText => {
+  if (/^\*+\s+/.test(bracketText)) return ['bold', bracketText.replace(/^\*+\s+/, '')]
+  if (/^\/+\s+/.test(bracketText)) return ['italic', bracketText.replace(/^\/+\s+/, '')]
+  if (/^\-\s+/.test(bracketText)) return ['strike', bracketText.replace(/^\-\s+/, '')]
+  if (/^\$\s+/.test(bracketText)) return ['math', bracketText.replace(/^\$\s+/, '')]
   if (bracketText.endsWith('.icon')) return ['icon', bracketText.replace(/\.icon$/, '')]
-  if (bracketText.startsWith('*')) return ['bold', bracketText.replace(/^\*+\s+/, '')]
-  if (bracketText.startsWith('/')) return ['italic', bracketText.replace(/^\/+\s+/, '')]
-  if (bracketText.startsWith('-')) return ['strike', bracketText.replace(/^\-\s+/, '')]
-  if (bracketText.startsWith('$')) return ['math', bracketText.replace(/^\$\s+/, '')]
+  if (bracketText.startsWith('/')) {
+    return ['externalLinkWithLabel', {
+      label: bracketText,
+      url: `${scrapboxUrl}${toLc(bracketText)}`
+    }]
+  }
   if (bracketText.includes(' ')) {
     // type: internalLink | gyazoWithLabel | externalLinkWithLabel | externalLink
     const [type, value] = divideText(bracketText)
