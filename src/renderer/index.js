@@ -53,13 +53,8 @@ const renderLine = (lastIndentSize, line, opts) => {
     return [indent, text]
   }
 
-  // toks = toks.map(t => {
-  //   if (typeof t === 'string') return {type: 'plain', text: t}
-  //   return t
-  // })
-
   if (indent > 0) text += `  ${'*'.repeat(indent)} `
-  // Ref. tiny-parser/lib.js
+  // Ref. tiny-parser/parser.js
   for (const tok of toks) {
     switch (tok.type) {
       case 'gyazo': {
@@ -120,6 +115,7 @@ const renderLine = (lastIndentSize, line, opts) => {
         break
       }
       case 'math': {
+        text += `(${tok.text})`
         break
       }
       default: {
