@@ -6,11 +6,9 @@ const reDir = './out/re'
 
 const getGyazoUrlList = pageRes => {
   const gayzoUrls = []
-  // page
-  for (const res of pageRes) {
+  for (const res of pageRes) { // page
     const toks = res.toks
-    // line
-    for (const tok of toks) {
+    for (const tok of toks) { // line
       if (tok.type === 'gyazo' || tok.type === 'gyazoWithLabel') {
         gayzoUrls.push(tok.text.url || tok.text)
       }
@@ -27,8 +25,7 @@ const detectIconGyazoIds = (pageRes, {topics}) => {
   let iconNameLcs = []
   for (const res of pageRes) {
     const toks = res.toks
-    // line
-    for (const tok of toks) {
+    for (const tok of toks) { // line
       if (tok.type === 'icon') {
         const iconNameLc = toLc(tok.text)
         if (!topicsLc.includes(iconNameLc)) continue

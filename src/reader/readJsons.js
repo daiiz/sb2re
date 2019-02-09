@@ -1,4 +1,5 @@
 const fs = require('fs')
+const {toLc} = require('../writer/')
 
 const jsonBaseDir = './json'
 const getJsonDirPath = ({projectName}) => {
@@ -20,7 +21,7 @@ const detectJsonFilePaths = projectName => {
 
 const readPages = ({projectName, topics}) => {
   const jsonPaths = detectJsonFilePaths(projectName)
-  const topicsLc = topics.map(topic => topic.toLowerCase())
+  const topicsLc = topics.map(topic => toLc(topic))
   const targetPages = []
 
   for (const path of jsonPaths) {
@@ -29,7 +30,7 @@ const readPages = ({projectName, topics}) => {
     for (const page of pages) {
       const {title, lines} = page
       if (!title || !lines) continue
-      const titleLc = title.toLowerCase()
+      const titleLc = toLc(title)
       // topicsに列挙されていないpageは対象外である
       if (!topicsLc.includes(titleLc)) continue
       lines.shift()

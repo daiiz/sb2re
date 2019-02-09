@@ -29,8 +29,6 @@ class Renderer {
     let {indent, isQuote, toks, block} = line
     let text = ''
 
-    this.lastIndent = indent
-
     if (block) {
       switch (block) {
         case 'codeblock': {
@@ -75,7 +73,7 @@ class Renderer {
             // 見出しとして解釈
             text = [`== ${tok.text}`, ''].join('\n')
           } else {
-            text += `@<u>{${tok.text}}`
+            text += `@<tt>{${tok.text}}`
           }
           break
         }
@@ -86,7 +84,7 @@ class Renderer {
         case 'internalLink': {
           const linkLc = toLc(tok.text)
           if (opts.links.includes(linkLc)) {
-            text += `@<tt>{${tok.text}} [@<chap>{${linkLc}}]`
+            text += `@<u>{${tok.text}} [@<chap>{${linkLc}}]`
           } else {
             text += tok.text
           }
@@ -130,11 +128,11 @@ class Renderer {
     if (isQuote) {
       text = [`//quote{`, text.replace(/^\s+\*+\s+/, ''), `//}`].join('\n')
     } else {
-      if (this.lastIndentSize === 0 && indent > 0) {
+      if (this.lastIndent === 0 && indent > 0) {
         text = ['', text].join('\n')
       }
     }
-
+    this.lastIndent = indent
     return text
   }
 }

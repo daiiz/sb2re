@@ -1,7 +1,7 @@
 const TinyParser = require('./tiny-parser')
 
 const parseLines = lines => {
-  const parser = new TinyParser() // 複数行に跨ることあるので状態管理必要
+  const parser = new TinyParser()
   for (const line of lines) {
     parser.parseNewLine(line)
   }
