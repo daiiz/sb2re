@@ -23,31 +23,16 @@ const detectBracketType = bracketText => {
   if (bracketText.startsWith('/')) return ['italic', bracketText.replace(/^\/+\s+/, '')]
   if (bracketText.startsWith('-')) return ['strike', bracketText.replace(/^\-\s+/, '')]
   if (bracketText.startsWith('$')) return ['math', bracketText.replace(/^\$\s+/, '')]
-  // if (!bracketText.includes(' ')) {
-  //   if (isUrl(bracketText)) {
-  //     return [isGyazoUrl(bracketText) ? 'gyazo' : 'externalLink', bracketText]
-  //   }
-  //   return ['internalLink', bracketText]
-  // }
   if (bracketText.includes(' ')) {
-    // ラベル付きリンク
+    // type: internalLink | gyazoWithLabel | externalLinkWithLabel | externalLink
     const [type, value] = divideText(bracketText)
     return [type, value]
-    // const [a, b] = divideText(bracketText) // bracketText.split(' ')
-    // if (isUrl(a)) {
-    //   return [isGyazoUrl(a) ? 'gyazoWithLabel' : 'externalLinkWithLabel', {url: a, label: b}]
-    // } else if (isUrl(b)) {
-    //   return [isGyazoUrl(b) ? 'gyazoWithLabel' : 'externalLinkWithLabel', {url: b, label: a}]
-    // } else {
-    //   return ['internalLink', bracketText]
-    // }
   } else {
     if (isUrl(bracketText)) {
       return [isGyazoUrl(bracketText) ? 'gyazo' : 'externalLink', bracketText]
     }
     return ['internalLink', bracketText]
   }
-  // return ['bracket', bracketText]
 }
 
 const detectBackquoteType = bracketText => {

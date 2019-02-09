@@ -28,18 +28,22 @@ const divideText = text => {
     }
   }
 
+  const label = texts.join(' ').trim()
   switch (urls.length) {
     case 0: {
       if (gyazoUrls.length === 0) {
-        return ['internalLink', texts.join(' ').trim()]
+        return ['internalLink', label]
       } else {
-        return ['gyazo', gyazoUrls[0]]
+        return ['gyazoWithLabel', {
+          label,
+          url: gyazoUrls[0]
+        }]
       }
     }
     case 1: {
       if (gyazoUrls.length === 0) {
         return ['externalLinkWithLabel', {
-          label: texts.join(' ').trim(),
+          label,
           url: urls[0]
         }]
       } else {
