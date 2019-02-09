@@ -1,6 +1,6 @@
 const fs = require('fs')
 const {uniq} = require('lodash')
-const TinyParser = require('./parse-line')
+const TinyParser = require('./tiny-parser')
 const {toLc} = require('../writer/')
 
 const reDir = './out/re'
