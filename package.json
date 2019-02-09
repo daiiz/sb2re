@@ -6,6 +6,7 @@
   "scripts": {
     "convert": "node ./src/main/converter.js",
     "download-images": "node ./src/main/image-downloader.js",
+    "clear-images": "rm ./out/images/*.png && rm ./out/images/*.jpg",
     "debug": "sh ./scripts/debug.sh"
   },
   "keywords": [
