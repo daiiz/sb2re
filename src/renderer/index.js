@@ -139,6 +139,10 @@ class Renderer {
       }
     }
 
+    if (indent === 0 && text.length === 0) {
+      text += ['', `//blankline`, ''].join('\n')
+    }
+
     if (isQuote) {
       text = [`//quote{`, text.replace(/^\s+\*+\s+/, ''), `//}`].join('\n')
     } else {
