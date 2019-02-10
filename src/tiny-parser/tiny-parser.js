@@ -21,6 +21,7 @@ class TinyParser {
 
   parseBlock (indent, text, isStart) {
     if (!isStart && indent <= this._blockIndent) {
+      // block終了
       this._res.push({
         block: this._opendBlock,
         indent: this._blockIndent,
@@ -55,7 +56,6 @@ class TinyParser {
       const gyazoIds = detectGyazoIdsInLine(toks)
       if (gyazoIds.length > 0) this.topGyazoId = gyazoIds[0]
     }
-
     parseBackquotes(toks)
 
     this._res.push({indent, isQuote, toks: flattenDeep(toks)})

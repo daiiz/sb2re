@@ -115,7 +115,7 @@ class Renderer {
           break
         }
         case 'math': {
-          text += `(${tok.text})`
+          text += `@<m>{${tok.text}}`
           break
         }
         default: {
