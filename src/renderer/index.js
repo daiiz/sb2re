@@ -25,8 +25,15 @@ class Renderer {
     this.lastIndent = 0
   }
 
+  prependEmptyLine (text, indent) {
+    if (this.lastIndent === 0 && indent > 0) {
+      text = ['', text].join('\n')
+    }
+    return text
+  }
+
   renderLine (line, opts) {
-    let {indent, isQuote, toks, block} = line
+    let { indent, isQuote, isShell, toks, block } = line
     let text = ''
 
     if (block) {
@@ -54,6 +61,13 @@ class Renderer {
       return text
     }
 
+    if (isShell) {
+      text = `  ${'*'.repeat(indent)} @<tt>{$ ${toks.map(tok => tok.text).join('')}}`
+      text = this.prependEmptyLine(text, indent)
+      this.lastIndent = indent
+      return text
+    }
+
     if (indent > 0) text += `  ${'*'.repeat(indent)} `
     // Ref. tiny-parser/parser.js
     for (const tok of toks) {
@@ -64,7 +78,7 @@ class Renderer {
           break
         }
         case 'gyazoWithLabel': {
-          const {label, url} = tok.text
+          const { label, url } = tok.text
           text = [`//image[${getGyazoId(url)}][][scale=0.5]{`, '//}', label, ''].join('\n')
           break
         }
@@ -128,9 +142,7 @@ class Renderer {
     if (isQuote) {
       text = [`//quote{`, text.replace(/^\s+\*+\s+/, ''), `//}`].join('\n')
     } else {
-      if (this.lastIndent === 0 && indent > 0) {
-        text = ['', text].join('\n')
-      }
+      text = this.prependEmptyLine(text, indent)
     }
     this.lastIndent = indent
     return text

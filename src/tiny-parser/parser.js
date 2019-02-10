@@ -10,7 +10,7 @@ const STRIKE = /^\-\s+/
 const MATH = /^\$\s+/
 const ICON = /\.icon$/
 
-// 字下げ幅と引用であるかを把握する
+// 字下げ幅, 引用, Shellであるかを把握する
 const getIndentSize = text => {
   const pattern = /^\s+/
   const matched = text.match(pattern)
@@ -21,7 +21,11 @@ const getIndentSize = text => {
   const isQuote = quotePattern.test(text)
   text = text.replace(quotePattern, '')
 
-  return [indentSize, isQuote, text]
+  const shellPattetn = /^\$\s+/
+  const isShell = shellPattetn.test(text)
+  text = text.replace(shellPattetn, '')
+
+  return [indentSize, isQuote, isShell, text]
 }
 
 // 括弧に囲まれた文字列を受け取り、記法の種類を特定する

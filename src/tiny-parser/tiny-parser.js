@@ -35,7 +35,7 @@ class TinyParser {
   }
 
   parseNewLine (text) {
-    const [indent, isQuote, trimedText] = getIndentSize(text)
+    const [indent, isQuote, isShell, trimedText] = getIndentSize(text)
 
     let blockStart = false
     if (trimedText.startsWith('code:')) {
@@ -58,7 +58,7 @@ class TinyParser {
     }
     parseBackquotes(toks)
 
-    this._res.push({indent, isQuote, toks: flattenDeep(toks)})
+    this._res.push({indent, isQuote, isShell, toks: flattenDeep(toks)})
   }
 }
 
