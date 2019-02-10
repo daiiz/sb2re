@@ -53,6 +53,13 @@ class Renderer {
     let { indent, isQuote, isShell, toks, block } = line
     let text = ''
 
+    if (isShell) {
+      text = `  ${'*'.repeat(indent)} @<tt>{$ ${toks.map(tok => tok.text).join('')}}`
+      text = this.prependEmptyLineIfNeeded(text, indent)
+      this.lastIndent = indent
+      return text
+    }
+
     if (block) {
       switch (block) {
         case 'codeblock': {
@@ -75,13 +82,6 @@ class Renderer {
           break
         }
       }
-      return text
-    }
-
-    if (isShell) {
-      text = `  ${'*'.repeat(indent)} @<tt>{$ ${toks.map(tok => tok.text).join('')}}`
-      text = this.prependEmptyLineIfNeeded(text, indent)
-      this.lastIndent = indent
       return text
     }
 
