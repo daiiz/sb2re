@@ -23,4 +23,3 @@ Run following to download the images.
 ```
 $ npm run download-images
 ```
-
