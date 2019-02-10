@@ -25,7 +25,7 @@ class Renderer {
     this.lastIndent = 0
   }
 
-  prependEmptyLine (text, indent) {
+  prependEmptyLineIfNeeded (text, indent) {
     if (this.lastIndent === 0 && indent > 0) {
       text = ['', text].join('\n')
     }
@@ -63,7 +63,7 @@ class Renderer {
 
     if (isShell) {
       text = `  ${'*'.repeat(indent)} @<tt>{$ ${toks.map(tok => tok.text).join('')}}`
-      text = this.prependEmptyLine(text, indent)
+      text = this.prependEmptyLineIfNeeded(text, indent)
       this.lastIndent = indent
       return text
     }
@@ -142,7 +142,7 @@ class Renderer {
     if (isQuote) {
       text = [`//quote{`, text.replace(/^\s+\*+\s+/, ''), `//}`].join('\n')
     } else {
-      text = this.prependEmptyLine(text, indent)
+      text = this.prependEmptyLineIfNeeded(text, indent)
     }
     this.lastIndent = indent
     return text
