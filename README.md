@@ -2,7 +2,8 @@
 
 UNOFFICIAL/EXPERIMENTAL
 
-https://scrapbox.io/teamj/ScrapboxコンテンツをReVIEW記法に変換
+- https://scrapbox.io/daiiz/sb2re
+- https://scrapbox.io/teamj/ScrapboxコンテンツをReVIEW記法に変換 (private)
 
 ## Build
 ```
@@ -12,7 +13,16 @@ $ npm install
 ## Usage
 Please place json files exported from [Scrapbox](https://scrapbox.io/product) in `./scrapbox/:projectName/`.
 
-Edit topics.txt then run the following script.
+Edit topics.txt. See `topics.sample.txt` for a detailed example.
+```
+/projectName
+
+pageTitle1
+pageTitle2
+# Comment
+```
+
+Run the following script to convert Scrapbox lines data to Re:VIEW notation.
 ```
 $ npm run convert
 ```
