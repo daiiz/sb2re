@@ -1,8 +1,6 @@
 const {flattenDeep} = require('lodash')
-const {
-  getIndentSize, splitToBracketToks, parseBackquotes,
-  detectGyazoIdsInLine
-} = require('./parser')
+const {getIndentSize, splitToBracketToks, parseBackquotes} = require('./parser')
+const {detectGyazoIdsInLine} = require('./gyazo')
 
 class TinyParser {
   constructor() {
@@ -23,6 +21,7 @@ class TinyParser {
 
   parseBlock (indent, text, isStart) {
     if (!isStart && indent <= this._blockIndent) {
+      // block終了
       this._res.push({
         block: this._opendBlock,
         indent: this._blockIndent,
@@ -36,7 +35,7 @@ class TinyParser {
   }
 
   parseNewLine (text) {
-    const [indent, isQuote, trimedText] = getIndentSize(text)
+    const [indent, isQuote, isShell, trimedText] = getIndentSize(text)
 
     let blockStart = false
     if (trimedText.startsWith('code:')) {
@@ -57,10 +56,9 @@ class TinyParser {
       const gyazoIds = detectGyazoIdsInLine(toks)
       if (gyazoIds.length > 0) this.topGyazoId = gyazoIds[0]
     }
-
     parseBackquotes(toks)
 
-    this._res.push({indent, isQuote, toks: flattenDeep(toks)})
+    this._res.push({indent, isQuote, isShell, toks: flattenDeep(toks)})
   }
 }
 

@@ -1,6 +1,7 @@
 const fs = require('fs')
 const {uniq} = require('lodash')
 const {toLc} = require('../writer/')
+const {getGyazoId} = require('../gyazo')
 
 const reDir = './out/re'
 
@@ -51,4 +52,22 @@ const detectIconGyazoIds = (pageRes, {topics}) => {
   return res
 }
 
-module.exports = {getGyazoUrlList, detectIconGyazoIds}
+const detectGyazoIdsInLine = toks => {
+  const res = []
+  for (const tok of toks) {
+    switch (tok.type) {
+      case 'gyazo': {
+        res.push(getGyazoId(tok.text))
+        break
+      }
+      case 'gyazoWithLabel': {
+        res.push(getGyazoId(tok.text.url))
+        break
+      }
+    }
+  }
+  return res
+}
+
+
+module.exports = {getGyazoUrlList, detectIconGyazoIds, detectGyazoIdsInLine}

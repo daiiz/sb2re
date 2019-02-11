@@ -1,3 +1,4 @@
+const {parse} = require('url')
 const {getGyazoId} = require('../gyazo')
 const {toLc} = require('../writer/')
 
@@ -25,9 +26,39 @@ class Renderer {
     this.lastIndent = 0
   }
 
+  prependEmptyLineIfNeeded (text, indent) {
+    if (this.lastIndent === 0 && indent > 0) {
+      text = ['', text].join('\n')
+    }
+    return text
+  }
+
+  getImageOptions (label) {
+    const queries = Object.create({
+      caption: '',
+      scale: '0.5'
+    })
+    if (/^https?:\/\//.test(label)) {
+      const {query} = parse(label)
+      if (query) {
+        query.split('&').map(kv => kv.split('='))
+          .filter(a => a.length === 2)
+          .map(a => queries[a[0]] = a[1])
+      }
+    }
+    return queries
+  }
+
   renderLine (line, opts) {
-    let {indent, isQuote, toks, block} = line
+    let { indent, isQuote, isShell, toks, block } = line
     let text = ''
+
+    if (isShell) {
+      text = `  ${'*'.repeat(indent)} @<tt>{$ ${toks.map(tok => tok.text).join('')}}`
+      text = this.prependEmptyLineIfNeeded(text, indent)
+      this.lastIndent = indent
+      return text
+    }
 
     if (block) {
       switch (block) {
@@ -65,7 +96,8 @@ class Renderer {
         }
         case 'gyazoWithLabel': {
           const {label, url} = tok.text
-          text = [`//image[${getGyazoId(url)}][][scale=0.5]{`, '//}', label, ''].join('\n')
+          const queries = this.getImageOptions(label)
+          text = [`//image[${getGyazoId(url)}][${queries.caption}][scale=${queries.scale}]{`, '//}', ''].join('\n')
           break
         }
         case 'bold': {
@@ -115,7 +147,7 @@ class Renderer {
           break
         }
         case 'math': {
-          text += `(${tok.text})`
+          text += `@<m>{${tok.text}}`
           break
         }
         default: {
@@ -125,12 +157,14 @@ class Renderer {
       }
     }
 
+    if (indent === 0 && text.length === 0) {
+      text += ['', `//blankline`, ''].join('\n')
+    }
+
     if (isQuote) {
       text = [`//quote{`, text.replace(/^\s+\*+\s+/, ''), `//}`].join('\n')
     } else {
-      if (this.lastIndent === 0 && indent > 0) {
-        text = ['', text].join('\n')
-      }
+      text = this.prependEmptyLineIfNeeded(text, indent)
     }
     this.lastIndent = indent
     return text
