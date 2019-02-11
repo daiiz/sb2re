@@ -36,7 +36,10 @@ const readPages = ({projectName, topics}) => {
       lines.shift()
       const pageText = {
         title,
-        lines: lines.map(line => line.text)
+        lines: lines.map(line => {
+          if (typeof line === 'string') return line
+          return line.text
+        })
       }
       targetPages.push(pageText)
     }
